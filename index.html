@@ -3,802 +3,450 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMS Dashboard — Relatório de Entrega</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<title>Dashboard SMS — Banpará 28/04/2026</title>
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
-    --bg: #0d0f14;
-    --surface: #13161e;
-    --surface2: #1a1e29;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
-    --text: #e8eaf0;
-    --text2: #7b82a0;
-    --text3: #4a5070;
-    --green: #22c55e;
-    --green-dim: rgba(34,197,94,0.12);
-    --red: #ef4444;
-    --red-dim: rgba(239,68,68,0.12);
-    --amber: #f59e0b;
-    --amber-dim: rgba(245,158,11,0.12);
-    --blue: #3b82f6;
-    --blue-dim: rgba(59,130,246,0.12);
-    --vivo: #9333ea;
-    --claro: #ef4444;
-    --tim: #3b82f6;
-    --surf: #22c55e;
-    --voda: #f59e0b;
-    --tele: #64748b;
-    --radius: 10px;
-    --radius-lg: 14px;
+    --bg:        #0d1117;
+    --bg2:       #161b22;
+    --bg3:       #21262d;
+    --border:    #30363d;
+    --text:      #e6edf3;
+    --text-dim:  #8b949e;
+    --green:     #1D9E75;
+    --orange:    #D85A30;
+    --amber:     #BA7517;
+    --red:       #E24B4A;
+    --blue:      #378ADD;
+    --gray:      #888780;
+    --radius-md: 8px;
+    --radius-lg: 12px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+
   body {
-    font-family: 'Sora', sans-serif;
     background: var(--bg);
     color: var(--text);
-    min-height: 100vh;
+    font-family: 'Courier New', Courier, monospace;
     font-size: 14px;
-    line-height: 1.5;
+    min-height: 100vh;
+    padding: 2rem;
   }
 
-  /* HEADER */
+  /* ── header ── */
   .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    gap: 1rem;
+    gap: 1.5rem;
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.75rem;
+    margin-bottom: 1.5rem;
   }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+  .header-icon {
+    font-size: 2rem;
+    line-height: 1;
   }
-  .logo-icon {
-    width: 30px; height: 30px;
-    background: var(--blue);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
+  .header-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: .02em;
   }
-  .logo-icon svg { width: 16px; height: 16px; }
-
-  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-  .day-tabs { display: flex; gap: 4px; background: var(--bg); border-radius: var(--radius); padding: 3px; border: 1px solid var(--border); }
-  .tab-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    padding: 5px 12px;
-    border-radius: 7px;
-    border: none;
-    background: transparent;
-    color: var(--text2);
-    cursor: pointer;
-    transition: all .15s;
-    white-space: nowrap;
+  .header-sub {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-top: 2px;
   }
-  .tab-btn.active { background: var(--blue); color: #fff; }
-  .tab-btn:hover:not(.active) { color: var(--text); background: var(--surface2); }
-
-  .upload-btn {
-    display: flex; align-items: center; gap: 6px;
-    font-family: 'Sora', sans-serif;
-    font-size: 13px;
-    padding: 6px 14px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border2);
-    background: var(--surface2);
-    color: var(--text);
-    cursor: pointer;
-    transition: all .15s;
-    white-space: nowrap;
+  .header-badge {
+    margin-left: auto;
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: .4rem .9rem;
+    font-size: .75rem;
+    color: var(--text-dim);
   }
-  .upload-btn:hover { border-color: var(--blue); color: var(--blue); }
-  #fileInput { display: none; }
 
-  /* MAIN */
-  .main { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+  /* ── cards ── */
+  .card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+  }
 
-  /* METRICS */
+  .section-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: .9rem;
+  }
+
+  /* ── metric cards ── */
   .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 12px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
   .metric-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-    position: relative;
-    overflow: hidden;
-    animation: fadeUp .3s ease both;
+    background: var(--bg3);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.1rem;
+    text-align: center;
   }
-  .metric-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity .2s;
+  .metric-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    letter-spacing: .03em;
   }
-  .metric-card:hover::before { opacity: 1; }
-  .metric-card.green::before { background: var(--green-dim); }
-  .metric-card.red::before { background: var(--red-dim); }
-  .metric-card.amber::before { background: var(--amber-dim); }
-  .metric-card.blue::before { background: var(--blue-dim); }
+  .metric-val {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .metric-sub {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    margin-top: 5px;
+  }
 
-  .metric-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
-  .metric-value { font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 500; line-height: 1; }
-  .metric-value.green { color: var(--green); }
-  .metric-value.red { color: var(--red); }
-  .metric-value.amber { color: var(--amber); }
-  .metric-value.blue { color: var(--blue); }
-  .metric-sub { font-size: 12px; color: var(--text2); margin-top: 6px; }
-  .metric-badge {
-    display: inline-block;
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    padding: 2px 7px;
-    border-radius: 20px;
-    margin-top: 6px;
-    font-weight: 500;
-  }
-  .metric-badge.green { background: var(--green-dim); color: var(--green); }
-  .metric-badge.red { background: var(--red-dim); color: var(--red); }
-  .metric-badge.amber { background: var(--amber-dim); color: var(--amber); }
-
-  /* CHARTS ROW */
+  /* ── charts grid ── */
   .charts-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-    animation: fadeUp .35s ease both;
-  }
-  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-  .card-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; }
-  .chart-wrap { position: relative; }
-
-  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
-  .legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-
-  /* OPERATOR ERRORS SECTION */
-  .section-title {
-    font-size: 11px; font-weight: 600; color: var(--text3);
-    text-transform: uppercase; letter-spacing: .07em;
-    margin-bottom: 1rem;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .section-title::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
-
-  /* OPERATOR CARDS GRID */
-  .op-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 1.5rem;
-  }
-  .op-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-    animation: fadeUp .4s ease both;
-  }
-  .op-card-header {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .op-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .op-name { font-size: 14px; font-weight: 600; flex: 1; }
-  .op-total { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); }
-  .op-rate {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-weight: 500;
-  }
-
-  .desc-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-  .desc-row:last-child { border-bottom: none; }
-  .desc-icon {
-    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
-  }
-  .desc-label {
-    flex: 1;
-    font-size: 12px;
-    color: var(--text2);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .desc-bar-wrap { width: 80px; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; flex-shrink: 0; overflow: hidden; }
-  .desc-bar { height: 100%; border-radius: 2px; transition: width .5s ease; }
-  .desc-count { font-family: 'DM Mono', monospace; font-size: 12px; min-width: 40px; text-align: right; }
-  .desc-pct { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); min-width: 36px; text-align: right; }
-
-  /* FULL TABLE */
-  .full-table-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-    animation: fadeUp .45s ease both;
-  }
-  .full-table-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
-  table { width: 100%; border-collapse: collapse; }
-  th {
-    text-align: left;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    padding: 10px 1.25rem;
-    border-bottom: 1px solid var(--border);
-    background: rgba(255,255,255,0.02);
-  }
-  td {
-    padding: 10px 1.25rem;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 13px;
-    vertical-align: middle;
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-
-  .pill {
-    display: inline-block;
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-weight: 500;
-  }
-  .pill-ok { background: var(--green-dim); color: var(--green); }
-  .pill-err { background: var(--red-dim); color: var(--red); }
-  .pill-pend { background: var(--amber-dim); color: var(--amber); }
-  .pill-info { background: var(--blue-dim); color: var(--blue); }
-
-  .bar-wrap { display: flex; align-items: center; gap: 8px; }
-  .bar-bg { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 2px; }
-
-  /* DRAG DROP */
-  .drop-overlay {
-    display: none;
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(13,15,20,0.9);
-    align-items: center; justify-content: center;
-    flex-direction: column; gap: 12px;
-    font-size: 18px; font-weight: 500;
-    color: var(--blue);
-    border: 2px dashed var(--blue);
-  }
-  .drop-overlay.show { display: flex; }
-
-  /* EMPTY */
-  .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--text2);
-  }
-  .empty-state h2 { font-size: 18px; font-weight: 500; margin-bottom: 8px; color: var(--text); }
-  .empty-state p { font-size: 13px; margin-bottom: 1.5rem; }
-  .empty-icon { font-size: 48px; margin-bottom: 1rem; }
-
-  /* TOAST */
-  .toast {
-    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 300;
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius);
-    padding: 12px 16px;
-    font-size: 13px;
-    color: var(--text);
-    transform: translateY(100px);
-    opacity: 0;
-    transition: all .25s ease;
-    max-width: 320px;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { border-color: var(--green); }
-  .toast.error { border-color: var(--red); }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (max-width: 1100px) {
-    .metrics-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-  @media (max-width: 900px) {
-    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 640px) {
     .charts-row { grid-template-columns: 1fr; }
-    .op-cards-grid { grid-template-columns: 1fr; }
-    .main { padding: 1rem; }
-    .header { padding: 0 1rem; }
-    .logo span { display: none; }
   }
-  @media (max-width: 600px) {
-    .metrics-grid { grid-template-columns: 1fr 1fr; }
+
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  /* ── legend ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin-bottom: 10px;
+  }
+  .leg-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+  .leg-sq {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── separador entre seções ── */
+  .mb { margin-bottom: 1.25rem; }
+
+  /* ── footer ── */
+  .footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 0.5px solid var(--border);
   }
 </style>
 </head>
 <body>
 
-<div class="drop-overlay" id="dropOverlay">
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-  Solte o CSV aqui para importar
+<!-- HEADER -->
+<div class="header">
+  <div class="header-icon">📡</div>
+  <div>
+    <div class="header-title">Dashboard SMS</div>
+    <div class="header-sub">Banpará · SUREC / GECDI · 28/04/2026</div>
+  </div>
+  <div class="header-badge">ReportSMS_2026_04_28</div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- MÉTRICAS PRINCIPAIS -->
+<div class="metrics-grid mb">
+  <div class="metric-card">
+    <div class="metric-label">Total de SMS</div>
+    <div class="metric-val" style="color:var(--text)">35.289</div>
+    <div class="metric-sub">disparados no dia</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Entregues</div>
+    <div class="metric-val" style="color:var(--green)">25.895</div>
+    <div class="metric-sub">73,4% do total</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Não recebidos</div>
+    <div class="metric-val" style="color:var(--orange)">6.160</div>
+    <div class="metric-sub">17,5% do total</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Solicitados</div>
+    <div class="metric-val" style="color:var(--amber)">3.219</div>
+    <div class="metric-sub">9,1% — pendentes</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Erro interno</div>
+    <div class="metric-val" style="color:var(--red)">15</div>
+    <div class="metric-sub">0,04% do total</div>
+  </div>
+</div>
 
-<header class="header">
-  <div class="logo">
-    <div class="logo-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
-        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-      </svg>
+<!-- LINHA 1: STATUS + OPERADORA -->
+<div class="charts-row mb">
+
+  <div class="card">
+    <div class="section-title">Status de entrega</div>
+    <div class="legend">
+      <span class="leg-item"><span class="leg-sq" style="background:var(--green)"></span>Entregue 73,4%</span>
+      <span class="leg-item"><span class="leg-sq" style="background:var(--orange)"></span>Não recebido 17,5%</span>
+      <span class="leg-item"><span class="leg-sq" style="background:var(--amber)"></span>Solicitado 9,1%</span>
+      <span class="leg-item"><span class="leg-sq" style="background:var(--red)"></span>Erro 0,04%</span>
     </div>
-    <span>SMS Dashboard</span>
+    <div class="chart-wrap" style="height:210px">
+      <canvas id="chartStatus" role="img" aria-label="Gráfico de rosca — status de entrega">
+        Entregue: 25895; Não recebido: 6160; Solicitado: 3219; Erro: 15.
+      </canvas>
+    </div>
   </div>
-  <div class="header-right">
-    <div class="day-tabs" id="dayTabs"></div>
-    <label class="upload-btn" for="fileInput">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Importar CSV
-    </label>
-    <input type="file" id="fileInput" accept=".csv" multiple>
-  </div>
-</header>
 
-<main class="main" id="main">
-  <div class="empty-state" id="emptyState">
-    <div class="empty-icon">📊</div>
-    <h2>Nenhum relatório carregado</h2>
-    <p>Importe um ou mais arquivos CSV de relatório de SMS para visualizar o painel.</p>
-    <label class="upload-btn" for="fileInput" style="display:inline-flex;margin:0 auto">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Escolher arquivos CSV
-    </label>
+  <div class="card">
+    <div class="section-title">Por operadora</div>
+    <div class="legend">
+      <span class="leg-item"><span class="leg-sq" style="background:var(--blue)"></span>Claro 34,5%</span>
+      <span class="leg-item"><span class="leg-sq" style="background:var(--green)"></span>Vivo 33,2%</span>
+      <span class="leg-item"><span class="leg-sq" style="background:var(--amber)"></span>Tim 21,5%</span>
+      <span class="leg-item"><span class="leg-sq" style="background:var(--gray)"></span>Outras 0,1%</span>
+    </div>
+    <div class="chart-wrap" style="height:210px">
+      <canvas id="chartOp" role="img" aria-label="Gráfico de rosca — distribuição por operadora">
+        Claro: 12168; Vivo: 11718; Tim: 7574; Outras: 37.
+      </canvas>
+    </div>
   </div>
-  <div id="dashboard" style="display:none"></div>
-</main>
 
+</div>
+
+<!-- LINHA 2: VOLUME POR HORA -->
+<div class="card mb">
+  <div class="section-title">Volume por hora do dia</div>
+  <div class="chart-wrap" style="height:230px">
+    <canvas id="chartHora" role="img" aria-label="Gráfico de barras — SMS por hora">
+      Pico de volume entre 09h e 11h, com mais de 5.000 mensagens por hora.
+    </canvas>
+  </div>
+</div>
+
+<!-- LINHA 3: MOTIVO DE FALHA -->
+<div class="card mb">
+  <div class="section-title">Motivo de falha de entrega</div>
+  <div class="chart-wrap" style="height:190px">
+    <canvas id="chartFalha" role="img" aria-label="Gráfico de barras horizontal — motivos de falha">
+      Número não coberto: 2369; Rejeitado pela operadora: 1950; Erro de rede: 1841; outros: 15.
+    </canvas>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Gerado em 28/04/2026 · Banpará — GECDI · Dados: ReportSMS_2026_04_28_17_26_10.csv
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const OP_COLORS = {
-  'Vivo': '#9333ea', 'Claro': '#ef4444', 'Tim': '#3b82f6',
-  'SurfTelecom': '#22c55e', 'Vodafone': '#f59e0b',
-  'Telecall': '#64748b', 'default': '#7b82a0'
-};
-const STATUS_COLORS = {
-  'Entregue': '#22c55e', 'Não recebido': '#ef4444',
-  'Solicitado': '#f59e0b', 'Erro interno': '#dc2626'
-};
+  // paleta (dark)
+  const GREEN  = '#1D9E75';
+  const ORANGE = '#D85A30';
+  const AMBER  = '#BA7517';
+  const RED    = '#E24B4A';
+  const BLUE   = '#378ADD';
+  const GRAY   = '#888780';
+  const TEXT_DIM  = '#8b949e';
+  const GRID_CLR  = 'rgba(255,255,255,0.08)';
 
-let DATA = {};
-let currentDay = null;
-let charts = {};
+  const tooltipDefaults = {
+    backgroundColor: '#21262d',
+    borderColor: '#30363d',
+    borderWidth: 1,
+    titleColor: '#e6edf3',
+    bodyColor: '#8b949e',
+    padding: 10,
+    cornerRadius: 6,
+  };
 
-// ─── PARSE CSV ───────────────────────────────────────────────
-function parseCSV(file) {
-  return new Promise(resolve => {
-    Papa.parse(file, {
-      header: true,
-      encoding: 'UTF-8',
-      skipEmptyLines: true,
-      complete(results) {
-        const rows = results.data;
-        if (!rows.length) return resolve(null);
-
-        const firstRow = rows[0];
-        const creationKey = Object.keys(firstRow).find(k => k.replace(/\uFEFF/g,'') === 'Criação');
-        const criacao = firstRow[creationKey] || '';
-        const dayKey = criacao.slice(0,10);
-        if (!dayKey || dayKey.length < 8) return resolve(null);
-
-        const status = {}, desc = {}, ops = {}, opStatus = {}, opDesc = {};
-        let erros = 0;
-
-        rows.forEach(r => {
-          const st = r['Status'] || '';
-          const ds = (r['Desc. Status'] || '').trim();
-          const op = (r['Operadora'] || '').trim();
-          if (st) status[st] = (status[st]||0)+1;
-          if (ds) desc[ds] = (desc[ds]||0)+1;
-          if (op) {
-            ops[op] = (ops[op]||0)+1;
-            if (!opStatus[op]) opStatus[op] = {};
-            if (!opDesc[op]) opDesc[op] = {};
-            if (st) opStatus[op][st] = (opStatus[op][st]||0)+1;
-            if (ds) opDesc[op][ds] = (opDesc[op][ds]||0)+1;
+  // ── STATUS ────────────────────────────────────────────────────────────
+  new Chart(document.getElementById('chartStatus'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Entregue', 'Não recebido', 'Solicitado', 'Erro'],
+      datasets: [{
+        data: [25895, 6160, 3219, 15],
+        backgroundColor: [GREEN, ORANGE, AMBER, RED],
+        borderWidth: 0,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...tooltipDefaults,
+          callbacks: {
+            label: ctx =>
+              '  ' + ctx.label + ': ' +
+              ctx.parsed.toLocaleString('pt-BR') +
+              ' (' + ((ctx.parsed / 35289) * 100).toFixed(1) + '%)'
           }
-          if (st === 'Não recebido' || st === 'Erro interno') erros++;
-        });
-
-        resolve({ dayKey, total: rows.length, status, desc_status: desc, operadoras: ops, op_status: opStatus, op_desc: opDesc, erros });
+        }
       }
-    });
+    }
   });
-}
 
-// ─── HANDLE FILES ────────────────────────────────────────────
-document.getElementById('fileInput').addEventListener('change', async e => {
-  const files = Array.from(e.target.files);
-  let loaded = 0;
-  for (const file of files) {
-    const d = await parseCSV(file);
-    if (d) { DATA[d.dayKey] = d; loaded++; }
-  }
-  e.target.value = '';
-  if (loaded) {
-    showToast(`${loaded} arquivo(s) importado(s) com sucesso`, 'success');
-    rebuildTabs();
-    const days = Object.keys(DATA).sort().reverse();
-    setDay(currentDay && DATA[currentDay] ? currentDay : days[0]);
-  } else {
-    showToast('Nenhum arquivo válido encontrado', 'error');
-  }
-});
-
-// Drag & drop
-document.addEventListener('dragover', e => { e.preventDefault(); document.getElementById('dropOverlay').classList.add('show'); });
-document.addEventListener('dragleave', e => { if (!e.relatedTarget) document.getElementById('dropOverlay').classList.remove('show'); });
-document.addEventListener('drop', async e => {
-  e.preventDefault();
-  document.getElementById('dropOverlay').classList.remove('show');
-  const files = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.csv'));
-  let loaded = 0;
-  for (const file of files) {
-    const d = await parseCSV(file);
-    if (d) { DATA[d.dayKey] = d; loaded++; }
-  }
-  if (loaded) {
-    showToast(`${loaded} arquivo(s) importado(s)`, 'success');
-    rebuildTabs();
-    const days = Object.keys(DATA).sort().reverse();
-    setDay(days[0]);
-  }
-});
-
-// ─── TABS ─────────────────────────────────────────────────────
-function rebuildTabs() {
-  const container = document.getElementById('dayTabs');
-  const days = Object.keys(DATA).sort().reverse();
-  container.innerHTML = days.map(d =>
-    `<button class="tab-btn${d===currentDay?' active':''}" onclick="setDay('${d}')">${d}</button>`
-  ).join('');
-}
-
-function setDay(day) {
-  currentDay = day;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent === day));
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
-  render();
-}
-
-// ─── RENDER ───────────────────────────────────────────────────
-function render() {
-  const d = DATA[currentDay];
-  if (!d) return;
-  const html = `
-    ${renderMetrics(d)}
-    <div class="charts-row">
-      ${renderOpChartCard(d)}
-      ${renderStatusChartCard(d)}
-      ${renderErrorChartCard(d)}
-    </div>
-    <div class="section-title">Erros detalhados por operadora</div>
-    <div class="op-cards-grid" id="opCardsGrid">${renderOpCards(d)}</div>
-    <div class="section-title">Tabela completa por operadora</div>
-    ${renderFullTable(d)}
-    <div class="section-title">Todos os Desc. Status</div>
-    ${renderAllDescStatus(d)}
-  `;
-  document.getElementById('dashboard').innerHTML = html;
-  setTimeout(() => { initOpChart(d); initStatusChart(d); initErrorChart(d); }, 50);
-}
-
-function renderMetrics(d) {
-  const entregue = d.status['Entregue']||0;
-  const solicitado = d.status['Solicitado']||0;
-  const pctE = ((entregue/d.total)*100).toFixed(1);
-  const pctEr = ((d.erros/d.total)*100).toFixed(1);
-  const pctS = ((solicitado/d.total)*100).toFixed(1);
-  const erroInterno = d.status['Erro interno']||0;
-  const pctEI = ((erroInterno/d.total)*100).toFixed(2);
-  return `<div class="metrics-grid">
-    <div class="metric-card blue">
-      <div class="metric-label">Total disparado</div>
-      <div class="metric-value blue">${d.total.toLocaleString('pt-BR')}</div>
-      <div class="metric-sub">${currentDay}</div>
-    </div>
-    <div class="metric-card green">
-      <div class="metric-label">Entregues</div>
-      <div class="metric-value green">${entregue.toLocaleString('pt-BR')}</div>
-      <span class="metric-badge green">${pctE}% do total</span>
-    </div>
-    <div class="metric-card red">
-      <div class="metric-label">Com erro</div>
-      <div class="metric-value red">${d.erros.toLocaleString('pt-BR')}</div>
-      <span class="metric-badge red">${pctEr}% do total</span>
-    </div>
-    <div class="metric-card amber">
-      <div class="metric-label">Pendente / Solicitado</div>
-      <div class="metric-value amber">${solicitado.toLocaleString('pt-BR')}</div>
-      <span class="metric-badge amber">${pctS}% do total</span>
-    </div>
-    <div class="metric-card" style="border-color:rgba(124,58,237,0.3)">
-      <div class="metric-label">SMS com Erro Interno</div>
-      <div class="metric-value" style="color:#7c3aed">${erroInterno.toLocaleString('pt-BR')}</div>
-      <span class="metric-badge" style="background:rgba(124,58,237,0.12);color:#7c3aed">${pctEI}% do total</span>
-    </div>
-  </div>`;
-}
-
-function renderOpChartCard(d) {
-  const ops = Object.keys(d.operadoras).sort((a,b) => d.operadoras[b]-d.operadoras[a]);
-  const legend = ops.map(o => `<div class="legend-item"><span class="legend-dot" style="background:${OP_COLORS[o]||OP_COLORS.default}"></span>${o} <span style="font-family:'DM Mono',monospace;margin-left:4px">${d.operadoras[o].toLocaleString('pt-BR')}</span></div>`).join('');
-  return `<div class="card">
-    <div class="card-header"><div class="card-title">Por operadora</div></div>
-    <div class="legend">${legend}</div>
-    <div class="chart-wrap" style="height:180px"><canvas id="opChart" role="img" aria-label="SMS por operadora"></canvas></div>
-  </div>`;
-}
-
-function renderStatusChartCard(d) {
-  const statuses = Object.keys(d.status);
-  const legend = statuses.map(s => `<div class="legend-item"><span class="legend-dot" style="background:${STATUS_COLORS[s]||'#888'}"></span>${s} <span style="font-family:'DM Mono',monospace;margin-left:4px">${d.status[s].toLocaleString('pt-BR')}</span></div>`).join('');
-  return `<div class="card">
-    <div class="card-header"><div class="card-title">Status geral</div></div>
-    <div class="legend">${legend}</div>
-    <div class="chart-wrap" style="height:180px"><canvas id="statusChart" role="img" aria-label="Status geral"></canvas></div>
-  </div>`;
-}
-
-function renderErrorChartCard(d) {
-  // collect error desc_status (exclude success/pending)
-  const errLabels = ['Operator network error','Mobile number not covered','Message rejected by operator','Message confirmation unavailable'];
-  const errData = [];
-  const errColors = ['#ef4444','#f59e0b','#dc2626','#64748b'];
-  const legend = [];
-  errLabels.forEach((l,i) => {
-    const v = d.desc_status[l] || 0;
-    errData.push({ label: l, v, color: errColors[i] });
-    if (v > 0) legend.push(`<div class="legend-item"><span class="legend-dot" style="background:${errColors[i]}"></span>${l.replace('Operator network error','Rede operadora').replace('Mobile number not covered','Número não coberto').replace('Message rejected by operator','Rejeitado operadora').replace('Message confirmation unavailable','Confirmação indispon.')} <span style="font-family:'DM Mono',monospace;margin-left:4px">${v.toLocaleString('pt-BR')}</span></div>`);
-  });
-  // add generic erros
-  const erroInterno = d.status['Erro interno']||0;
-  if (erroInterno > 0) {
-    errData.push({ label: 'Erro interno', v: erroInterno, color: '#7c3aed' });
-    legend.push(`<div class="legend-item"><span class="legend-dot" style="background:#7c3aed"></span>Erro interno <span style="font-family:'DM Mono',monospace;margin-left:4px">${erroInterno}</span></div>`);
-  }
-  return `<div class="card">
-    <div class="card-header"><div class="card-title">Tipos de erro</div></div>
-    <div class="legend">${legend.join('')}</div>
-    <div class="chart-wrap" style="height:180px"><canvas id="errChart" role="img" aria-label="Tipos de erro"></canvas></div>
-  </div>`;
-}
-
-function renderOpCards(d) {
-  const ops = Object.keys(d.operadoras).sort((a,b) => d.operadoras[b]-d.operadoras[a]);
-  return ops.map(op => {
-    const color = OP_COLORS[op]||OP_COLORS.default;
-    const total = d.operadoras[op];
-    const st = d.op_status[op]||{};
-    const desc = d.op_desc[op]||{};
-    const entregue = st['Entregue']||0;
-    const erros = (st['Não recebido']||0)+(st['Erro interno']||0);
-    const taxa = ((entregue/total)*100).toFixed(1);
-    const taxaColor = parseFloat(taxa)>=80?'#22c55e':parseFloat(taxa)>=50?'#f59e0b':'#ef4444';
-    const taxaBg = parseFloat(taxa)>=80?'rgba(34,197,94,0.12)':parseFloat(taxa)>=50?'rgba(245,158,11,0.12)':'rgba(239,68,68,0.12)';
-
-    // error desc items
-    const isError = s => s.toLowerCase().includes('error')||s.toLowerCase().includes('erro')||s.toLowerCase().includes('rejected')||s.toLowerCase().includes('not covered')||s.toLowerCase().includes('unavailable');
-    const descEntries = Object.entries(desc).sort((a,b)=>b[1]-a[1]);
-    const maxDesc = descEntries[0]?.[1]||1;
-
-    const descRows = descEntries.map(([label, count]) => {
-      const err = isError(label);
-      const pend = label.includes('Solicitado');
-      const barColor = err ? '#ef4444' : pend ? '#f59e0b' : '#22c55e';
-      const dotColor = barColor;
-      const pct = ((count/total)*100).toFixed(1);
-      const barW = ((count/maxDesc)*100).toFixed(0);
-      const short = label.length > 45 ? label.slice(0,45)+'…' : label;
-      return `<div class="desc-row">
-        <span class="desc-icon" style="background:${dotColor}"></span>
-        <span class="desc-label" title="${label}">${short}</span>
-        <div class="desc-bar-wrap"><div class="desc-bar" style="width:${barW}%;background:${barColor}"></div></div>
-        <span class="desc-count" style="color:${dotColor}">${count.toLocaleString('pt-BR')}</span>
-        <span class="desc-pct">${pct}%</span>
-      </div>`;
-    }).join('');
-
-    return `<div class="op-card">
-      <div class="op-card-header">
-        <span class="op-dot" style="background:${color}"></span>
-        <span class="op-name">${op}</span>
-        <span class="op-total" style="font-family:'DM Mono',monospace">${total.toLocaleString('pt-BR')} msgs</span>
-        <span class="op-rate pill" style="color:${taxaColor};background:${taxaBg}">${taxa}% entregue</span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem">
-        <div style="background:rgba(34,197,94,0.08);border-radius:8px;padding:8px 10px">
-          <div style="font-size:10px;color:#7b82a0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Entregue</div>
-          <div style="font-family:'DM Mono',monospace;font-size:16px;color:#22c55e">${entregue.toLocaleString('pt-BR')}</div>
-        </div>
-        <div style="background:rgba(239,68,68,0.08);border-radius:8px;padding:8px 10px">
-          <div style="font-size:10px;color:#7b82a0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Erros</div>
-          <div style="font-family:'DM Mono',monospace;font-size:16px;color:#ef4444">${erros.toLocaleString('pt-BR')}</div>
-        </div>
-        <div style="background:rgba(245,158,11,0.08);border-radius:8px;padding:8px 10px">
-          <div style="font-size:10px;color:#7b82a0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Pendente</div>
-          <div style="font-family:'DM Mono',monospace;font-size:16px;color:#f59e0b">${(st['Solicitado']||0).toLocaleString('pt-BR')}</div>
-        </div>
-      </div>
-      <div style="font-size:11px;color:#4a5070;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Desc. status detalhado</div>
-      ${descRows}
-    </div>`;
-  }).join('');
-}
-
-function renderFullTable(d) {
-  const ops = Object.keys(d.operadoras).sort((a,b) => d.operadoras[b]-d.operadoras[a]);
-  const rows = ops.map(op => {
-    const color = OP_COLORS[op]||OP_COLORS.default;
-    const total = d.operadoras[op];
-    const st = d.op_status[op]||{};
-    const entregue = st['Entregue']||0;
-    const naoRecebido = st['Não recebido']||0;
-    const erroInterno = st['Erro interno']||0;
-    const solicitado = st['Solicitado']||0;
-    const taxa = ((entregue/total)*100).toFixed(1);
-    const taxaColor = parseFloat(taxa)>=80?'#22c55e':parseFloat(taxa)>=50?'#f59e0b':'#ef4444';
-    const maxTotal = d.operadoras[ops[0]];
-    const barPct = ((total/maxTotal)*100).toFixed(0);
-    const topErr = Object.entries(d.op_desc[op]||{}).filter(([k]) => k.toLowerCase().includes('error')||k.toLowerCase().includes('erro')||k.toLowerCase().includes('rejected')||k.toLowerCase().includes('not covered')).sort((a,b)=>b[1]-a[1])[0];
-    return `<tr>
-      <td><span style="display:inline-flex;align-items:center;gap:7px;font-weight:500"><span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>${op}</span></td>
-      <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${barPct}%;background:${color}"></div></div><span style="font-family:'DM Mono',monospace;font-size:12px">${total.toLocaleString('pt-BR')}</span></div></td>
-      <td style="font-family:'DM Mono',monospace;color:#22c55e">${entregue.toLocaleString('pt-BR')}</td>
-      <td style="font-family:'DM Mono',monospace;color:#ef4444">${naoRecebido.toLocaleString('pt-BR')}</td>
-      <td style="font-family:'DM Mono',monospace;color:#dc2626">${erroInterno}</td>
-      <td style="font-family:'DM Mono',monospace;color:#f59e0b">${solicitado.toLocaleString('pt-BR')}</td>
-      <td><span style="font-family:'DM Mono',monospace;font-weight:500;color:${taxaColor}">${taxa}%</span></td>
-      <td style="font-size:12px;color:#7b82a0;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${topErr ? topErr[0]+' ('+topErr[1]+')' : '—'}</td>
-    </tr>`;
-  }).join('');
-  return `<div class="full-table-card" style="margin-bottom:1.5rem">
-    <div class="full-table-header"><div class="card-title">Resumo por operadora</div></div>
-    <table>
-      <thead><tr>
-        <th>Operadora</th><th>Total</th><th>Entregue</th><th>Não recebido</th><th>Erro interno</th><th>Solicitado</th><th>Taxa entrega</th><th>Principal erro</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  </div>`;
-}
-
-function renderAllDescStatus(d) {
-  const entries = Object.entries(d.desc_status).sort((a,b)=>b[1]-a[1]);
-  const maxVal = entries[0]?.[1]||1;
-  const isError = s => s.toLowerCase().includes('error')||s.toLowerCase().includes('erro')||s.toLowerCase().includes('rejected')||s.toLowerCase().includes('not covered')||s.toLowerCase().includes('unavailable');
-  const rows = entries.map(([label, count]) => {
-    const err = isError(label);
-    const pend = label.includes('Solicitado');
-    const barColor = err ? '#ef4444' : pend ? '#f59e0b' : '#22c55e';
-    const pillCls = err ? 'pill-err' : pend ? 'pill-pend' : 'pill-ok';
-    const pillTxt = err ? 'Erro' : pend ? 'Pendente' : 'Sucesso';
-    const pct = ((count/d.total)*100).toFixed(1);
-    const barW = ((count/maxVal)*100).toFixed(0);
-    const short = label.length > 80 ? label.slice(0,80)+'…' : label;
-    return `<tr>
-      <td><span title="${label}" style="font-size:13px">${short}</span></td>
-      <td><span class="pill ${pillCls}">${pillTxt}</span></td>
-      <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${barW}%;background:${barColor}"></div></div></div></td>
-      <td style="font-family:'DM Mono',monospace;font-size:13px">${count.toLocaleString('pt-BR')}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px;color:#7b82a0">${pct}%</td>
-    </tr>`;
-  }).join('');
-  return `<div class="full-table-card">
-    <div class="full-table-header"><div class="card-title">Todos os status de entrega</div></div>
-    <table>
-      <thead><tr><th>Descrição</th><th>Tipo</th><th>Proporção</th><th>Qtd</th><th>%</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  </div>`;
-}
-
-// ─── CHARTS ───────────────────────────────────────────────────
-function initOpChart(d) {
-  const ctx = document.getElementById('opChart');
-  if (!ctx) return;
-  const ops = Object.keys(d.operadoras).sort((a,b)=>d.operadoras[b]-d.operadoras[a]);
-  new Chart(ctx, {
+  // ── OPERADORA ─────────────────────────────────────────────────────────
+  new Chart(document.getElementById('chartOp'), {
     type: 'doughnut',
-    data: { labels: ops, datasets: [{ data: ops.map(o=>d.operadoras[o]), backgroundColor: ops.map(o=>OP_COLORS[o]||OP_COLORS.default), borderWidth: 2, borderColor: '#13161e' }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.label}: ${c.raw.toLocaleString('pt-BR')}` } } }, cutout: '65%' }
+    data: {
+      labels: ['Claro', 'Vivo', 'Tim', 'Outras'],
+      datasets: [{
+        data: [12168, 11718, 7574, 37],
+        backgroundColor: [BLUE, GREEN, AMBER, GRAY],
+        borderWidth: 0,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...tooltipDefaults,
+          callbacks: {
+            label: ctx =>
+              '  ' + ctx.label + ': ' +
+              ctx.parsed.toLocaleString('pt-BR') +
+              ' (' + ((ctx.parsed / 31497) * 100).toFixed(1) + '%)'
+          }
+        }
+      }
+    }
   });
-}
 
-function initStatusChart(d) {
-  const ctx = document.getElementById('statusChart');
-  if (!ctx) return;
-  const statuses = Object.keys(d.status);
-  new Chart(ctx, {
-    type: 'doughnut',
-    data: { labels: statuses, datasets: [{ data: statuses.map(s=>d.status[s]), backgroundColor: statuses.map(s=>STATUS_COLORS[s]||'#888'), borderWidth: 2, borderColor: '#13161e' }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.label}: ${c.raw.toLocaleString('pt-BR')}` } } }, cutout: '65%' }
-  });
-}
-
-function initErrorChart(d) {
-  const ctx = document.getElementById('errChart');
-  if (!ctx) return;
-  const items = [
-    { label: 'Rede operadora', v: d.desc_status['Operator network error']||0, color: '#ef4444' },
-    { label: 'Nº não coberto', v: d.desc_status['Mobile number not covered']||0, color: '#f59e0b' },
-    { label: 'Rejeitado', v: d.desc_status['Message rejected by operator']||0, color: '#dc2626' },
-    { label: 'Confirmação indispon.', v: d.desc_status['Message confirmation unavailable']||0, color: '#64748b' },
-    { label: 'Erro interno', v: d.status['Erro interno']||0, color: '#7c3aed' },
-  ].filter(i => i.v > 0);
-  new Chart(ctx, {
+  // ── VOLUME POR HORA ───────────────────────────────────────────────────
+  new Chart(document.getElementById('chartHora'), {
     type: 'bar',
-    data: { labels: items.map(i=>i.label), datasets: [{ data: items.map(i=>i.v), backgroundColor: items.map(i=>i.color), borderRadius: 6, borderSkipped: false }] },
-    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.raw.toLocaleString('pt-BR')}` } } }, scales: { x: { ticks: { color: '#4a5070', font: { family: 'DM Mono' } }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#7b82a0', font: { size: 11 } }, grid: { display: false } } } }
+    data: {
+      labels: ['00h','01h','02h','03h','04h','05h','06h','07h',
+               '08h','09h','10h','11h','12h','13h','14h','15h','16h','17h'],
+      datasets: [{
+        label: 'SMS',
+        data: [30,3,3672,4224,1459,1071,391,1163,1482,5079,5231,4665,1521,1459,1331,1154,994,360],
+        backgroundColor: BLUE,
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...tooltipDefaults,
+          callbacks: {
+            label: ctx => '  ' + ctx.parsed.y.toLocaleString('pt-BR') + ' SMS'
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: TEXT_DIM, font: { size: 11, family: "'Courier New', monospace" }, autoSkip: false },
+          grid: { display: false },
+          border: { color: 'rgba(255,255,255,0.1)' },
+        },
+        y: {
+          ticks: {
+            color: TEXT_DIM,
+            font: { size: 11, family: "'Courier New', monospace" },
+            callback: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v
+          },
+          grid: { color: GRID_CLR },
+          border: { color: 'transparent' },
+        }
+      }
+    }
   });
-}
 
-// ─── TOAST ────────────────────────────────────────────────────
-function showToast(msg, type='success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + type;
-  setTimeout(() => { t.className = 'toast'; }, 3000);
-}
-
-// ─── LOAD PRELOADED DATA ──────────────────────────────────────
-const PRELOADED = {"27/04/2026":{"dayKey":"27/04/2026","total":17687,"status":{"Entregue":13920,"Não recebido":2081,"Solicitado":1682,"Erro interno":4},"desc_status":{"Message received by mobile":13920,"Envio Solicitado":1682,"Operator network error":775,"Mobile number not covered":660,"Message rejected by operator":646,"Erro na tentativa de envio: 10 Incorrect or incomplete 'to' mobile number":4},"operadoras":{"Vivo":6582,"Claro":5561,"Tim":3636,"SurfTelecom":12,"Vodafone":3},"op_status":{"Claro":{"Entregue":4990,"Não recebido":571},"SurfTelecom":{"Entregue":8,"Não recebido":4},"Tim":{"Entregue":2987,"Não recebido":649},"Vivo":{"Entregue":5932,"Não recebido":650},"Vodafone":{"Entregue":3}},"op_desc":{"Claro":{"Message received by mobile":4990,"Mobile number not covered":453,"Operator network error":118},"SurfTelecom":{"Message received by mobile":8,"Operator network error":4},"Tim":{"Message received by mobile":2987,"Message rejected by operator":646,"Operator network error":3},"Vivo":{"Message received by mobile":5932,"Operator network error":650},"Vodafone":{"Message received by mobile":3}},"erros":2085},"24/04/2026":{"dayKey":"24/04/2026","total":15692,"status":{"Entregue":12098,"Não recebido":1802,"Solicitado":1789,"Erro interno":3},"desc_status":{"Message received by mobile":12098,"Envio Solicitado":1789,"Operator network error":673,"Mobile number not covered":573,"Message rejected by operator":556,"Erro na tentativa de envio: 10 Incorrect or incomplete 'to' mobile number":3},"operadoras":{"Vivo":5738,"Claro":4970,"Tim":3033,"SurfTelecom":20},"op_status":{"Claro":{"Entregue":4420,"Não recebido":550},"SurfTelecom":{"Entregue":16,"Não recebido":4},"Tim":{"Entregue":2470,"Não recebido":563},"Vivo":{"Entregue":5192,"Não recebido":546}},"op_desc":{"Claro":{"Message received by mobile":4420,"Mobile number not covered":434,"Operator network error":116},"SurfTelecom":{"Message received by mobile":16,"Operator network error":4},"Tim":{"Message received by mobile":2470,"Message rejected by operator":556,"Operator network error":7},"Vivo":{"Message received by mobile":5192,"Operator network error":546}},"erros":1805},"23/04/2026":{"dayKey":"23/04/2026","total":34910,"status":{"Entregue":27201,"Não recebido":5239,"Solicitado":2377,"Erro interno":93},"desc_status":{"Message received by mobile":27193,"Operator network error":2824,"Envio Solicitado":2377,"Mobile number not covered":1244,"Message rejected by operator":1171,"Erro na tentativa de envio: 0 The request was canceled due to the configured HttpClient.Timeout of 100 seconds elapsing. - A task was canceled.":88,"Message confirmation unavailable":8,"Erro na tentativa de envio: 10 Incorrect or incomplete 'to' mobile number":5},"operadoras":{"Vivo":13676,"Claro":11569,"Tim":6799,"SurfTelecom":57,"Vodafone":2,"Telecall":1},"op_status":{"Claro":{"Entregue":9843,"Não recebido":1726},"SurfTelecom":{"Entregue":45,"Não recebido":12},"Telecall":{"Entregue":1},"Tim":{"Entregue":5574,"Não recebido":1225},"Vivo":{"Entregue":11738,"Não recebido":1938},"Vodafone":{"Não recebido":2}},"op_desc":{"Claro":{"Message received by mobile":9836,"Mobile number not covered":908,"Operator network error":818,"Message confirmation unavailable":7},"SurfTelecom":{"Message received by mobile":45,"Operator network error":12},"Telecall":{"Message received by mobile":1},"Tim":{"Message received by mobile":5574,"Message rejected by operator":1171,"Operator network error":54},"Vivo":{"Message received by mobile":11737,"Operator network error":1938,"Message confirmation unavailable":1},"Vodafone":{"Operator network error":2}},"erros":5332}};
-
-Object.assign(DATA, PRELOADED);
-rebuildTabs();
-const firstDay = Object.keys(DATA).sort().reverse()[0];
-setDay(firstDay);
+  // ── MOTIVO DE FALHA ───────────────────────────────────────────────────
+  new Chart(document.getElementById('chartFalha'), {
+    type: 'bar',
+    indexAxis: 'y',
+    data: {
+      labels: [
+        'Nº não coberto',
+        'Rejeitado pela operadora',
+        'Erro de rede (operadora)',
+        'Envio internacional',
+        'Nº incorreto',
+        'Outros erros',
+      ],
+      datasets: [{
+        label: 'Ocorrências',
+        data: [2369, 1950, 1841, 6, 5, 4],
+        backgroundColor: [ORANGE, AMBER, RED, GRAY, GRAY, GRAY],
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...tooltipDefaults,
+          callbacks: {
+            label: ctx => '  ' + ctx.parsed.x.toLocaleString('pt-BR') + ' ocorrências'
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: TEXT_DIM,
+            font: { size: 11, family: "'Courier New', monospace" },
+            callback: v => v.toLocaleString('pt-BR')
+          },
+          grid: { color: GRID_CLR },
+          border: { color: 'transparent' },
+        },
+        y: {
+          ticks: { color: TEXT_DIM, font: { size: 11, family: "'Courier New', monospace" } },
+          grid: { display: false },
+          border: { color: 'rgba(255,255,255,0.1)' },
+        }
+      }
+    }
+  });
 </script>
 </body>
 </html>
